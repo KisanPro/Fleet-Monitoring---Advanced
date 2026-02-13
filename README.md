@@ -343,4 +343,3 @@ Before deployment:
 * Confirm camera device order
 
 Now we’re aligned. 🚛
-```
