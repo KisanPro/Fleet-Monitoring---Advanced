@@ -1,414 +1,430 @@
-# 🚛 AI FLEET – Intelligent Driver & Cargo Monitoring System
+Perfect.
+Here is your **single, clean, copy-paste ready `README.md` file**.
+No extra commentary. No fragments. Just one complete GitHub-ready file.
 
-AI Fleet is a real-time multi-camera vehicle safety and tracking system.
-
-It combines:
-
-- 🧠 AI-based Driver Monitoring (Drowsiness, Yawning, Phone Usage, Distraction)
-- 📦 Cargo Security Monitoring
-- 🛣 Road Object Detection
-- 📍 GPS Tracking with Geofencing
-- 🚨 Overspeed Detection
-- 📲 Telegram + SMS Alerts
-- 🌐 Live Web Dashboard
-
-This system is designed for fleet vehicles, logistics trucks, and safety monitoring deployments.
+You can paste this directly into `README.md`.
 
 ---
 
-# 🧩 SYSTEM ARCHITECTURE
-
-The system runs 3 parallel modules:
-
-1. **Road Camera Module**
-   - Detects vehicles/objects using YOLOv8
-
-2. **Driver/Cargo Camera Module (Switchable Mode)**
-   - Driver Mode → Drowsiness, yawning, distraction, phone detection
-   - Cargo Mode → Object detection + unauthorized hand detection
-
-3. **GPS + SIM7600 Module**
-   - Reads GPS coordinates
-   - Checks geofence boundary
-   - Monitors speed
-   - Sends alerts
-
-All modules stream to a live Flask web dashboard.
+```markdown
+# 🚛 AI Fleet Monitoring System  
+### Continuous Road Monitoring + Switchable Driver/Cargo Intelligence  
+**Jetson Orin Nano | 3 USB Cameras | SIM7600 LTE + GPS**
 
 ---
 
-# 🛠 HARDWARE REQUIREMENTS
+![Platform](https://img.shields.io/badge/Platform-Jetson%20Orin%20Nano-green)
+![OS](https://img.shields.io/badge/OS-Ubuntu%20JetPack-blue)
+![AI](https://img.shields.io/badge/AI-YOLOv8%20%2B%20MediaPipe-orange)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
-## Minimum Required:
+---
+
+## 📌 Overview
+
+The **AI Fleet Monitoring System** is a real-time edge AI platform for intelligent vehicle surveillance and safety monitoring.
+
+It runs entirely on NVIDIA Jetson Orin Nano and provides:
+
+- 🛣 Continuous road object detection
+- 👤 Driver drowsiness detection
+- 📦 Cargo intrusion monitoring
+- 📍 GPS tracking
+- 📲 SMS alerts
+- 💬 Telegram alerts
+- 🌐 Live web dashboard
+- 🔁 Driver/Cargo mode switching
+
+All inference runs locally at the edge. No cloud dependency required.
+
+---
+
+## 🏗 System Architecture
+
+```
+
+3x USB Cameras
+(Driver | Road | Cargo)
+│
+▼
+Jetson Orin Nano
+YOLOv8 + MediaPipe + Flask
+│
+├── Telegram Alerts
+├── SMS Alerts (SIM7600)
+└── GPS Logging
+
+````
+
+---
+
+## 🧰 Hardware Requirements
+
+### 1️⃣ Processing Unit
+- NVIDIA Jetson Orin Nano (8GB recommended)
+- Official 19V power adapter
+- Cooling fan (recommended)
+
+### 2️⃣ Cameras (3x USB UVC Cameras)
+
+| Device Path | Role |
+|------------|------|
+| `/dev/video0` | Driver Camera |
+| `/dev/video1` | Road Camera |
+| `/dev/video2` | Cargo Camera |
+
+Use UVC-compatible USB webcams.
+
+### 3️⃣ Connectivity Module
+SIM7600 USB LTE + GPS Module  
+- Active SIM card (SMS enabled)  
+- GPS antenna connected  
+- USB connection to Jetson  
+
+---
+
+## 🖥 Software Stack
 
 | Component | Purpose |
-|-----------|---------|
-| PC / Laptop (i5 or better) OR Jetson Nano/Xavier | Main processing |
-| 2–3 USB Cameras | Road + Driver + Cargo |
-| SIM7600 4G LTE Module | GPS + SMS |
-| Active SIM Card | SMS + Network |
-| USB Cables | Connections |
-
-Optional:
-- GPU for faster YOLO inference
-- Jetson device for edge deployment
-
----
-
-# 💻 SOFTWARE REQUIREMENTS
-
-- Python 3.9 – 3.11
-- Ubuntu / Windows
-- Internet connection (for Telegram alerts)
+|-----------|----------|
+| Ubuntu (JetPack 5.x / 6.x) | Base OS |
+| YOLOv8 | Road object detection |
+| MediaPipe | Driver monitoring |
+| OpenCV | Video capture |
+| Flask | Web dashboard |
+| PySerial | SIM7600 communication |
+| Requests | Telegram API |
+| CSV logging | Event storage |
 
 ---
 
-# 📦 STEP 1 – INSTALL PYTHON
+## ⚙️ Installation
 
-Download Python from:
-https://www.python.org/downloads/
+### Update System
 
-During installation:
-✔ Check “Add Python to PATH”
+```bash
+sudo apt update
+sudo apt upgrade -y
+````
 
-Verify installation:
-```
-python --version
-```
+### Install Python Dependencies
 
----
-
-# 📦 STEP 2 – CREATE PROJECT FOLDER
-
-Create a folder:
-```
-AI_FLEET
+```bash
+pip install ultralytics mediapipe flask opencv-python pyserial requests numpy
 ```
 
-Inside it, place:
-- Your main Python script
-- `yolov8n.pt` model file
+Optional performance optimization:
 
-Download YOLO model from:
-https://github.com/ultralytics/ultralytics
-
----
-
-# 📦 STEP 3 – INSTALL DEPENDENCIES
-
-Open terminal inside project folder:
-
-```
-pip install ultralytics
-pip install opencv-python
-pip install mediapipe
-pip install flask
-pip install pyserial
-pip install requests
-pip install numpy
-pip install turbojpeg
-```
-
-If TurboJPEG fails:
-```
+```bash
 pip install PyTurboJPEG
 ```
 
 ---
 
-# 📦 STEP 4 – TELEGRAM BOT SETUP
+## 📷 Camera Verification
 
-1. Open Telegram
-2. Search: @BotFather
-3. Create a new bot
-4. Copy the Bot Token
-
-Edit this line in the code:
-
-```
-TELEGRAM_URL = "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage"
+```bash
+ls /dev/video*
 ```
 
-Replace `<YOUR_BOT_TOKEN>`.
+Expected:
 
-Then get your Chat ID:
-- Open this link:
-  ```
-  https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates
-  ```
-- Send a message to your bot first.
-- Copy your chat_id.
-
-Replace:
 ```
-CHAT_ID = "<CHAT_ID>"
+/dev/video0
+/dev/video1
+/dev/video2
+```
+
+Test cameras:
+
+```bash
+sudo apt install cheese
+cheese
 ```
 
 ---
 
-# 📦 STEP 5 – SMS SETUP (SIM7600)
+## 📡 SIM7600 Verification
 
-Insert SIM card into SIM7600 module.
+Check USB ports:
 
-Connect module to PC via USB.
-
-Replace:
-```
-SMS_NUMBER = "<PHONE>"
-```
-
-Use format:
-```
-+919XXXXXXXXX
-```
-
-Ensure drivers are installed for SIM7600.
-
-On Linux check:
-```
+```bash
 ls /dev/ttyUSB*
 ```
 
-On Windows check:
-Device Manager → COM Ports
+Install minicom:
 
----
-
-# 📦 STEP 6 – CONFIGURE GEOFENCE
-
-Edit:
-
-```
-GEOFENCE_LAT = 13.2866
-GEOFENCE_LON = 77.5953
-GEOFENCE_RADIUS_KM = 0.5
+```bash
+sudo apt install minicom
 ```
 
-Use Google Maps to find coordinates.
+Test connection:
 
----
-
-# 📦 STEP 7 – RUN THE SYSTEM
-
-In terminal:
-
-```
-python your_script_name.py
+```bash
+minicom -D /dev/ttyUSB2 -b 115200
 ```
 
-If successful, you will see Flask running.
+Inside terminal:
 
-Open browser:
 ```
-http://localhost:5000
+AT
+```
+
+Expected response:
+
+```
+OK
+```
+
+Enable GPS:
+
+```
+AT+CGPS=1
 ```
 
 ---
 
-# 🌐 DASHBOARD FEATURES
+## 🤖 YOLO Model Setup
 
-- Live Road Camera Feed
-- Live Driver/Cargo Feed
-- Switch Modes:
-  - Driver Mode
-  - Cargo Mode
+### Option 1 – Auto Download
 
-Click:
+YOLOv8 model downloads automatically on first run.
+
+### Option 2 – Recommended (TensorRT Engine)
+
+```bash
+yolo export model=yolov8n.pt format=engine
 ```
-/set/driver
+
+Place `yolov8n.engine` inside project directory.
+
+---
+
+## 💬 Telegram Bot Setup
+
+1. Open Telegram
+2. Search for `@BotFather`
+3. Run:
+
 ```
-or
+/newbot
 ```
-/set/cargo
+
+4. Copy the Bot Token
+5. Send a message to your bot
+6. Open:
+
+```
+https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
+```
+
+7. Copy `chat.id`
+
+---
+
+## 📁 Project Structure
+
+```
+ai_fleet/
+│
+├── ai_fleet.py
+├── yolov8n.engine (optional)
+├── ai_fleet_log.csv
+└── README.md
 ```
 
 ---
 
-# 🧠 DRIVER MODE FEATURES
+## ▶️ Running the System
 
-Detects:
-
-- Eye closure (Drowsiness)
-- Yawning
-- Looking away
-- Mobile phone usage
-- Overspeeding
-- Geofence breach
-
-Alerts sent via:
-- Telegram
-- SMS
+```bash
+cd ai_fleet
+python3 ai_fleet.py
+```
 
 ---
 
-# 📦 CARGO MODE FEATURES
+## 🌐 Access Dashboard
 
-Detects:
+Find Jetson IP:
 
-- Object presence
-- Unauthorized hand access
+```bash
+hostname -I
+```
 
-Alerts sent instantly.
+Open in browser:
+
+```
+http://<jetson_ip>:5000
+```
+
+Dashboard shows:
+
+* Road stream (always active)
+* Driver or Cargo stream
+* Mode switching controls
+* Alert logs
 
 ---
 
-# 📍 GPS FEATURES
+## 🔁 System Modes
+
+### 🚗 Road Monitoring
+
+Always active.
+
+### 👤 Driver Mode
+
+* Road + Driver cameras active
+* Drowsiness detection enabled
+
+### 📦 Cargo Mode
+
+* Road + Cargo cameras active
+* Unauthorized access detection enabled
+
+Switching mode:
+
+* Releases secondary camera
+* Activates selected camera
+* Road feed continues uninterrupted
+
+---
+
+## 🚨 Alert System
+
+| Event          | Action         |
+| -------------- | -------------- |
+| Driver Drowsy  | Telegram + SMS |
+| Cargo Breach   | Telegram + SMS |
+| High Vibration | SMS            |
+| Door Open      | SMS            |
+
+Alerts include timestamp and GPS location.
+
+---
+
+## 📍 GPS Logging
 
 Every 5 seconds:
 
-- Reads GPS location
-- Logs coordinates
-- Checks geofence
-- Checks speed
-- Sends alert if:
-  - Outside geofence
-  - Overspeeding
+* Reads GPS from SIM7600
+* Appends to `ai_fleet_log.csv`
 
----
-
-# 📁 LOG FILE
-
-File created:
-```
-ai_fleet_log.csv
-```
-
-Contains:
-- Timestamp
-- Module
-- Event
-- Message
-
----
-
-# 🚨 ALERT SYSTEM
-
-Alert cooldown = 10 seconds
-
-Prevents spamming.
-
-Triggered by:
-- Drowsiness
-- Yawning
-- Looking away
-- Phone detection
-- Unauthorized cargo access
-- Geofence breach
-- Overspeed
-
----
-
-# 🔄 CAMERA CONFIGURATION
-
-Edit camera indices:
+Format:
 
 ```
-DRIVER_CAM = 0
-ROAD_CAM   = 1
-CARGO_CAM  = 2
-```
-
-If camera not detected:
-Change numbers until correct.
-
-Test cameras using:
-```
-python -m cv2
+timestamp,module,submodule,message
 ```
 
 ---
 
-# ⚡ PERFORMANCE TIPS
+## 🔄 Auto Start on Boot (Optional)
 
-If system is slow:
+Create service file:
 
-- Reduce FPS:
-  ```
-  DRIVER_FPS = 10
-  ROAD_FPS = 8
-  ```
-
-- Use smaller YOLO model:
-  ```
-  yolov8n.pt
-  ```
-
-- Use GPU if available
-
----
-
-# 🧪 TESTING CHECKLIST
-
-✔ Cameras detected  
-✔ GPS returning data  
-✔ SMS sending  
-✔ Telegram alerts working  
-✔ Dashboard loading  
-✔ Log file generating  
-
----
-
-# 🛡 SECURITY NOTES
-
-- Do not expose Telegram token publicly
-- Do not push SIM credentials to GitHub
-- Use environment variables in production
-
----
-
-# 🚀 DEPLOYMENT OPTIONS
-
-You can deploy on:
-
-- Laptop (Development)
-- Jetson Nano (Edge)
-- Xavier NX (Industrial)
-- Industrial PC inside vehicle
-
----
-
-# 📌 USE CASES
-
-- Fleet Safety Monitoring
-- Logistics Tracking
-- Cold Chain Transport
-- Smart Agriculture Transport
-- Government Fleet Monitoring
-
----
-
-# ⚠ TROUBLESHOOTING
-
-If camera fails:
-- Check USB ports
-- Reduce resolution
-- Restart system
-
-If SMS fails:
-- Check SIM network
-- Check signal strength
-- Verify COM port
-
-If GPS fails:
-- Move near open sky
-- Check antenna
-
-If YOLO error:
+```bash
+sudo nano /etc/systemd/system/ai_fleet.service
 ```
-pip install ultralytics --upgrade
+
+Paste:
+
+```
+[Unit]
+Description=AI Fleet System
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/<username>/ai_fleet/ai_fleet.py
+WorkingDirectory=/home/<username>/ai_fleet
+Restart=always
+User=<username>
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable service:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable ai_fleet
+sudo systemctl start ai_fleet
 ```
 
 ---
 
-# 👨‍💻 AUTHOR
+## 📊 Performance Recommendations
 
-AI Fleet – Intelligent Monitoring System  
-Designed for real-time vehicle safety and tracking deployments.
+* Resolution: 640x480 for stable FPS
+* Use TensorRT engine for faster inference
+* Ensure active cooling
+* Use powered USB hub if running 3 cameras
 
 ---
 
-# 📄 LICENSE
+## 🛠 Troubleshooting
 
-For research, academic, and fleet deployment usage.
-Modify responsibly.
+Camera not detected:
 
+```bash
+ls /dev/video*
+```
+
+SIM not detected:
+
+```bash
+ls /dev/ttyUSB*
+```
+
+GPS not locking:
+
+```
+AT+CGPS=1
+```
+
+Low FPS:
+Reduce resolution inside script.
+
+---
+
+## 🎯 System Capabilities
+
+* Continuous road monitoring
+* Driver fatigue detection
+* Cargo security detection
+* GPS tracking
+* SMS alerting
+* Telegram alerting
+* Live dashboard
+* Fully edge-based AI inference
+
+---
+
+## 📜 License
+
+Specify your license here (MIT / Apache 2.0 / Research Use Only).
+
+---
+
+## 👨‍🔬 Project Category
+
+Edge AI Deployment
+Embedded Systems
+Fleet Safety & IoT Integration
+
+```
+
+---
+
+You now have a clean, professional, GitHub-ready single file.
+
+If you want next-level polish, I can generate:
+- 📊 Performance benchmark section
+- 🧠 AI model details section
+- 🧪 Testing methodology
+- 📦 Docker deployment version
+- 📈 Architecture diagram in Mermaid
+
+Your repo is now publication-grade. 🚛
+```
