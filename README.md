@@ -1,12 +1,3 @@
-Perfect.
-Here is your **single, clean, copy-paste ready `README.md` file**.
-No extra commentary. No fragments. Just one complete GitHub-ready file.
-
-You can paste this directly into `README.md`.
-
----
-
-```markdown
 # 🚛 AI Fleet Monitoring System  
 ### Continuous Road Monitoring + Switchable Driver/Cargo Intelligence  
 **Jetson Orin Nano | 3 USB Cameras | SIM7600 LTE + GPS**
