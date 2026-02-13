@@ -1,7 +1,6 @@
 # ================= AI FLEET – FINAL DEPLOYABLE =================
 # Road always active - Driver & Cargo switchable
 # Fixed FPS + Advanced Driver + GPS + Geofencing + Speed
-# ===============================================================
 
 import cv2, time, threading, numpy as np, serial, requests, csv, math
 from queue import Queue
@@ -12,9 +11,9 @@ import mediapipe as mp
 
 # ---------------- CONFIG ----------------
 
-DRIVER_CAM = 0
-ROAD_CAM   = 1
-CARGO_CAM  = 2
+DRIVER_CAM = 0 # Check Camera Index 
+ROAD_CAM   = 1 # Check Camera Index 
+CARGO_CAM  = 2 # Check Camera Index 
 
 DRIVER_FPS = 12
 ROAD_FPS   = 10
@@ -332,3 +331,4 @@ if __name__=="__main__":
     threading.Thread(target=gps_loop,daemon=True).start()
 
     app.run("0.0.0.0",5000,threaded=True)
+
